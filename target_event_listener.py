@@ -25,16 +25,19 @@ def on_message(client, userdata, msg):
     print("event message=" + str(eventMessage))
     eventMessage = dict(eventMessage)
     if 'event_name' in eventMessage:
-        if eventMessage.get('event_name') == 'target_hit':
+        handleTargetHit(eventMessage)
+    else:
+        print("No event name")
+
+def handleTargetHit(eventMessage):
+    if eventMessage.get('event_name') == 'target_hit':
             print("got a hit!!!!!!!!")
             targetId = eventMessage.get('target_id')
             score_keeper.addScore(1, targetId)
             print("Score for " + targetId + " =" + str(score_keeper.getScoreForTarget(targetId)))
-        else:
-            print("Not a target hit event")
     else:
-        print("No event name")
-    
+        print("Not a target hit event")
+
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
