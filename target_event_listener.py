@@ -2,6 +2,7 @@ import paho.mqtt.client as mqtt
 import json
 import score_keeper
 import os
+import urllib2
 
 serverIP = os.environ['pi_server_ip']
 
@@ -26,6 +27,8 @@ def on_message(client, userdata, msg):
     eventMessage = dict(eventMessage)
     if 'event_name' in eventMessage:
         handleTargetHit(eventMessage)
+    elif msg.payload == "timer_stopped":
+        handleTimerEnd()
     else:
         print("No event name")
 
@@ -38,6 +41,18 @@ def handleTargetHit(eventMessage):
     else:
         print("Not a target hit event")
 
+def handleTimerEnd():
+    target_1 = score_keeper.getScoreForTarget('target_1')
+    print("Got timer end message")
+    message = "Final Score is " + str(target_1) + "."
+    data = {"say": message + message,
+            "parms": "-s 140 -ven-us+f3"}
+    
+    req = urllib2.Request('http://' + serverIP + ':5000/say')
+    req.add_header('Content-Type', 'application/json')
+
+    response = urllib2.urlopen(req, json.dumps(data))
+    
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
