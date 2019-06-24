@@ -33,3 +33,7 @@ class ScoreKeeperTest(unittest.TestCase):
         scoreForTarget2 = score_keeper.getScoreForTarget('target_2')
         self.assertEqual(scoreForTarget1, 1)
         self.assertEqual(scoreForTarget2, 2)
+
+    def testGetScoreForTargetNeverHitReturnsZero(self):
+        value = score_keeper.getScoreForTarget("Notarealtarget")
+        self.assertEqual(value, 0)
